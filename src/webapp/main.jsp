@@ -49,38 +49,38 @@
 <h3>테이블</h3>
 <table>
   <thead>
-    <tr>
-      <th>
-      
-      </th>
-    </tr>
+  <tr>
+    <th>
+    
+    </th>
+  </tr>
   </thead>
   <tbody>
-    <%
-      Class.forName("com.mysql.cj.jdbc.Driver");
-      Connection conn = null;
-      
-      String dbname = "mydb";
-      String password = "sps2150";
-      String dbacct = "root";
-      String url = "jdbc:mysql://localhost:3306/"+dbname;
-      conn = DriverManager.getConnection(url, dbacct, password);
-      
-      String stmt1 = "select * from EMPLOYEE";
-      PreparedStatement p = conn.prepareStatement(stmt1);
-      ResultSet r = p.executeQuery();
-      
-      while (r.next()) {
-    %>
-    <tr>
-      <td><%= r.getString("ssn") %></td>
-    </tr>
-    <%
-      }
-      r.close();
-      p.close();
-      conn.close();
-    %>
+  <%
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    Connection conn = null;
+    
+    String dbname = "mydb";
+    String password = "sps2150";
+    String dbacct = "root";
+    String url = "jdbc:mysql://localhost:3306/"+dbname;
+    conn = DriverManager.getConnection(url, dbacct, password);
+    
+    String stmt1 = "select * from EMPLOYEE";
+    PreparedStatement p = conn.prepareStatement(stmt1);
+    ResultSet r = p.executeQuery();
+    
+    while (r.next()) {
+  %>
+  <tr>
+    <td><%= r.getString("ssn") %></td>
+  </tr>
+  <%
+    }
+    r.close();
+    p.close();
+    conn.close();
+  %>
   </tbody>
 </table>
 <hr>
@@ -93,6 +93,5 @@
   <p><input type="submit" value="Click"></p>
 </form>
 <hr>
-<a href="main">메인 페이지로 이동</a>
 </body>
 </html>
