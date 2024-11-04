@@ -57,12 +57,13 @@
   </thead>
   <tbody>
   <%
+    String dbacct = request.getParameter("dbacct");
+    String dbname = request.getParameter("dbname");
+    String password = request.getParameter("password");
+    
     Class.forName("com.mysql.cj.jdbc.Driver");
     Connection conn = null;
     
-    String dbname = "mydb";
-    String password = "sps2150";
-    String dbacct = "root";
     String url = "jdbc:mysql://localhost:3306/"+dbname;
     conn = DriverManager.getConnection(url, dbacct, password);
     
