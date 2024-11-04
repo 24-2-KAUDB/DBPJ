@@ -7,20 +7,11 @@
 <head>
   <meta charset="UTF-8">
   <title>24-2_DB_107</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-  <style>
-      *{
-          font-family: 'AppleSDGothicNeo', sans-serif;
-      }
-  </style>
 </head>
 <body>
 <h1>직원 검색 시스템</h1>
-<hr>
-<form method="get" >
-  <h3>Attribute에서 조건 선택</h3>
+<form>
+  <h3>검색 범위</h3>
   <select name = "Category" >
     <option value="none" selected>전체</option>
     <option value="department">부서</option>
@@ -35,7 +26,6 @@
   
   <hr>
   <h2>검색 항목</h2>
-  <h5>검색할 attribute 선택</h5>
   <label><input type="checkbox" name="name" value="1" checked> Name</label>
   <label><input type="checkbox" name="ssn" value="1" checked> Ssn</label>
   <label><input type="checkbox" name="bdate" value="1" checked> Bdate</label>
@@ -49,11 +39,10 @@
 <h3>테이블</h3>
 <table>
   <thead>
-  <tr>
-    <th>
-    
-    </th>
-  </tr>
+    <tr>
+      <th>선택</th>
+      <th>직원 번호</th>
+    </tr>
   </thead>
   <tbody>
   <%
@@ -74,6 +63,8 @@
     while (r.next()) {
   %>
   <tr>
+    
+    <td><input type="checkbox"></td>
     <td><%= r.getString("ssn") %></td>
   </tr>
   <%
@@ -85,14 +76,15 @@
   </tbody>
 </table>
 <hr>
-<form method = "get">
-  <h2>직원 정보 추가</h2>
-  <p><input type="submit" value="Click"></p>
-</form>
-<form method = "get">
-  <h2>부서 직원 Salary 변경</h2>
-  <p><input type="submit" value="Click"></p>
-</form>
+<div>
+  <h1>직원 추가 코드 작성</h1>
+</div>
+<div>
+  <h1>직원 업데이트 코드 작성</h1>
+</div>
+<div>
+  <h1>직원 삭제 코드 작성</h1>
+</div>
 <hr>
 </body>
 </html>
