@@ -7,9 +7,9 @@ import java.util.*;
 
 public class DatabaseService {
     private Connection connect() throws SQLException {
-        String url = "jdbc:mysql://DESKTOP-Q1IG1AR:3306/mydb";
+        String url = "jdbc:mysql://localhost:3306/mydb";
         String user = "root";
-        String password = "epdlxjqpdltmrlch";
+        String password = "";
         return DriverManager.getConnection(url, user, password);
     }
 
