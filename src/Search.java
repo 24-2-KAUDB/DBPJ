@@ -1,6 +1,6 @@
 import java.io.IOException;
 import java.sql.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class Search {
     public static void main(String[] args) throws SQLException, IOException {
@@ -9,6 +9,7 @@ public class Search {
 
         String dbacct, password, dbname;
 
+        // 사용자로부터 데이터베이스 정보 입력
         System.out.println("Enter database account:");
         dbacct = scanner.nextLine();
         System.out.println("Enter password:");
@@ -16,12 +17,13 @@ public class Search {
         System.out.println("Enter database name:");
         dbname = scanner.nextLine();
 
+        // 데이터베이스 연결
         String url = "jdbc:mysql://localhost:3306/" + dbname;
         conn = DriverManager.getConnection(url, dbacct, password);
 
-        // 검색 조건 입력 받기
+        // 검색 범위 입력 받기
         System.out.print("검색 범위 선택 (부서, 성별, 연봉, 생일, 전체 중 하나): ");
-        String category = scanner.nextLine();
+        String searchRange = scanner.nextLine();
 
         System.out.print("검색 값 입력: ");
         String inputText = scanner.nextLine();
@@ -46,32 +48,40 @@ public class Search {
             firstField = false;
 
             switch (field.trim()) {
-                case "Name" -> selectClause.append("concat(a.fname, ' ', ifnull(concat(' ', a.minit), ''), ' ', a.lname) as Name");
-                case "Supervisor" -> selectClause.append("concat(b.fname, ' ', b.minit, ' ', b.lname) as Supervisor");
-                case "Department" -> selectClause.append("dname as Department");
-                default -> selectClause.append("a.").append(field.trim());
+                case "Name":
+                    selectClause.append("concat(a.fname, ' ', ifnull(concat(' ', a.minit), ''), ' ', a.lname) as Name");
+                    break;
+                case "Supervisor":
+                    selectClause.append("concat(b.fname, ' ', b.minit, ' ', b.lname) as Supervisor");
+                    break;
+                case "Department":
+                    selectClause.append("dname as Department");
+                    break;
+                default:
+                    selectClause.append("a.").append(field.trim());
+                    break;
             }
         }
 
         // 검색 범위 조건 추가
         String rangeCondition = "";
         switch (searchRange) {
-            case "부서" -> {
+            case "부서":
                 whereClause.append(" AND Dname = ?");
                 rangeCondition = inputText;
-            }
-            case "성별" -> {
+                break;
+            case "성별":
                 whereClause.append(" AND Sex = ?");
                 rangeCondition = inputText;
-            }
-            case "연봉" -> {
+                break;
+            case "연봉":
                 whereClause.append(" AND Salary > ?");
                 rangeCondition = inputText;
-            }
-            case "생일" -> {
+                break;
+            case "생일":
                 whereClause.append(" AND MONTH(Bdate) = ?");
                 rangeCondition = inputText.replace("월", "");
-            }
+                break;
         }
 
         // 그룹별 평균 급여 쿼리 구성
@@ -102,16 +112,36 @@ public class Search {
                 while (rs.next()) {
                     for (String field : searchFields) {
                         switch (field.trim()) {
-                            case "Name" -> System.out.println("Name: " + rs.getString("Name"));
-                            case "Ssn" -> System.out.println("SSN: " + rs.getString("Ssn"));
-                            case "Bdate" -> System.out.println("Birth Date: " + rs.getDate("Bdate"));
-                            case "Address" -> System.out.println("Address: " + rs.getString("Address"));
-                            case "Sex" -> System.out.println("Sex: " + rs.getString("Sex"));
-                            case "Salary" -> System.out.println("Salary: " + rs.getDouble("Salary"));
-                            case "Supervisor" -> System.out.println("Supervisor: " + rs.getString("Supervisor"));
-                            case "Department" -> System.out.println("Department: " + rs.getString("Department"));
-                            case "AVG_Salary" -> System.out.println("Average Salary: " + rs.getDouble("AVG_Salary"));
-                            default -> System.out.println(field.trim() + ": " + rs.getString(field.trim()));
+                            case "Name":
+                                System.out.println("Name: " + rs.getString("Name"));
+                                break;
+                            case "Ssn":
+                                System.out.println("SSN: " + rs.getString("Ssn"));
+                                break;
+                            case "Bdate":
+                                System.out.println("Birth Date: " + rs.getDate("Bdate"));
+                                break;
+                            case "Address":
+                                System.out.println("Address: " + rs.getString("Address"));
+                                break;
+                            case "Sex":
+                                System.out.println("Sex: " + rs.getString("Sex"));
+                                break;
+                            case "Salary":
+                                System.out.println("Salary: " + rs.getDouble("Salary"));
+                                break;
+                            case "Supervisor":
+                                System.out.println("Supervisor: " + rs.getString("Supervisor"));
+                                break;
+                            case "Department":
+                                System.out.println("Department: " + rs.getString("Department"));
+                                break;
+                            case "AVG_Salary":
+                                System.out.println("Average Salary: " + rs.getDouble("AVG_Salary"));
+                                break;
+                            default:
+                                System.out.println(field.trim() + ": " + rs.getString(field.trim()));
+                                break;
                         }
                     }
                     System.out.println("------------");
@@ -125,7 +155,3 @@ public class Search {
         }
     }
 }
-
-//검색 범위: searchRange에 따라 WHERE 절을 구성하여 부서, 성별, 연봉, 생일 등의 조건에 맞는 데이터를 검색할 수 있습니다.
-//검색 항목: 사용자가 선택한 항목을 쉼표로 구분하여 입력받고, SELECT 절에 추가하여 필요한 항목만 조회할 수 있게 했습니다.
-//그룹별 평균 급여: groupBy 입력값에 따라 그룹별 평균 급여(성별, 부서)를 조회합니다. 해당 선택에 맞게 쿼리의 SELECT, FROM, WHERE 절을 동적으로 구성했습니다.
