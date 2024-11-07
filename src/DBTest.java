@@ -17,7 +17,7 @@ public class DBTest {
     System.out.println("Enter database name:");
     dbname = scanner.nextLine();
 
-    String url = "jdbc:mysql://localhost:3306/"+dbname;
+    String url = "jdbc:mysql://localhost:3306/mydb";
     conn = DriverManager.getConnection(url, dbacct, password);
 
     String stmt1 = "select Lname, Salary from EMPLOYEE where Ssn=?";

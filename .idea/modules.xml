@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/KAUDB.iml" filepath="$PROJECT_DIR$/KAUDB.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/DBPJ-js.iml" filepath="$PROJECT_DIR$/DBPJ-js.iml" />
->>>>>>> d2d2b3ec24333fd7c0bc98b0cfef8895d3a763d4
     </modules>
   </component>
 </project>
