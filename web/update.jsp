@@ -40,7 +40,7 @@
                 int rowsUpdated = p.executeUpdate();
                 
                 if (rowsUpdated > 0) {
-                    response.sendRedirect("index.jsp");
+                    response.sendRedirect("text.jsp");
                 } else {
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('직원 정보를 찾을 수 없습니다.');");
