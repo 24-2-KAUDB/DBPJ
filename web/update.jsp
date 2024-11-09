@@ -26,13 +26,11 @@
                 String url = "jdbc:mysql://localhost:3306/mydb";
                 String user = "root";
                 String password = "sps2150";//비번 입력
-                
                 Connection conn = null;
                 
                 conn = DriverManager.getConnection(url, user, password);
                 
-                String update = "UPDATE EMPLOYEE SET " + attribute + " = ? WHERE Ssn = ?";
-                
+                String update = "UPDATE EMPLOYEE SET " + attribute + " = ?, updated_date = CURDATE() WHERE Ssn = ?";
                 PreparedStatement p = conn.prepareStatement(update);
                 p.clearParameters();
                 p.setString(1, newValue);
@@ -42,6 +40,7 @@
                 if (rowsUpdated > 0) {
                     response.sendRedirect("text.jsp");
                 } else {
+                    
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('직원 정보를 찾을 수 없습니다.');");
                     out.println("</script>");

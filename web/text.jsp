@@ -45,6 +45,7 @@
           employee.put("Super_ssn", rs.getString("Super_ssn"));
           employee.put("Dno", rs.getInt("Dno"));
           employee.put("Dname", rs.getString("Dname"));
+          employee.put("updated_date", rs.getString("updated_date"));
           employeeList.add(employee);
         }
       } catch (SQLException e) {
@@ -75,6 +76,7 @@
     <th>Super_ssn</th>
     <th>Dno</th>
     <th>Dname</th>
+    <th>Updated_date</th>
   </tr>
   <%
     for (Map<String, Object> employee : employees) {
@@ -91,6 +93,7 @@
     <td><%= employee.get("Super_ssn") %></td>
     <td><%= employee.get("Dno") %></td>
     <td><%= employee.get("Dname") %></td>
+    <td><%= employee.get("updated_date") %></td>
   </tr>
   <%
     }
