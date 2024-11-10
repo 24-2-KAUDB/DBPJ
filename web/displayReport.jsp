@@ -13,7 +13,9 @@
 <%
   String[] attributes = request.getParameterValues("attributes");
   DatabaseService dbService = new DatabaseService();
-  List<Map<String, Object>> employeeList = dbService.getEmployeeData(attributes);
+  String username = (String) session.getAttribute("username");
+  String password = (String) session.getAttribute("password");
+  List<Map<String, Object>> employeeList = dbService.getEmployeeData(attributes, username, password);
 
   if (attributes != null && employeeList != null) {
 %>
@@ -36,5 +38,9 @@
     out.println("출력할 속성을 선택하지 않았거나 데이터가 없습니다.");
   }
 %>
+<form action="index.jsp" method="get">
+  <button type="submit">홈 화면</button>
+</form>
+
 </body>
 </html>

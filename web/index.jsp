@@ -12,8 +12,10 @@
 <h1>환영합니다! 직원 목록</h1>
 
 <%
+    String username = (String) session.getAttribute("username");
+    String password = (String) session.getAttribute("password");
     DatabaseService dbService = new DatabaseService();
-    List<Map<String, Object>> employees = dbService.getAllEmployeeData();
+    List<Map<String, Object>> employees = dbService.getAllEmployeeData(username, password);
 %>
 
 <table border="1">
@@ -29,6 +31,7 @@
         <th>Super_ssn</th>
         <th>Dno</th>
         <th>Dname</th>
+        <th>Updated_date</th>
     </tr>
     <%
         for (Map<String, Object> employee : employees) {
@@ -45,6 +48,7 @@
         <td><%= employee.get("Super_ssn") %></td>
         <td><%= employee.get("Dno") %></td>
         <td><%= employee.get("Dname") %></td>
+        <td><%= employee.get("updated_date") %></td>
     </tr>
     <%
         }
@@ -61,6 +65,11 @@
 <form action="employeeReport.jsp" method="get">
     <button type="submit">직원 보고서 보기</button>
 </form>
-
+<form action="search.jsp" method="get">
+    <button type="submit">직원 검색</button>
+</form>
+<form action="insert.jsp" method="get">
+    <button type="submit">직원 추가</button>
+</form>
 </body>
 </html>
