@@ -121,6 +121,8 @@ public class DatabaseService {
             return false;
         }
     }
+
+
     // 일반 검색 메서드 (검색 범위와 검색 항목을 사용)
     public List<Map<String, Object>> searchEmployees(String[] attributes, String condition, String username, String password) throws SQLException {
         List<Map<String, Object>> employeeList = new ArrayList<>();

@@ -1,7 +1,3 @@
-
-<%@ page import="com.example.DatabaseService" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
-
 <%@ page import="java.util.ArrayList, java.util.Arrays, java.util.List, java.util.Map" %>
 <%@ page import="com.example.DatabaseService" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -49,8 +45,9 @@
         queryAttributes.add("Ssn");
     }
 
-    List<Map<String, Object>> employeeList = dbService.getEmployeeData(queryAttributes.toArray(new String[0]),username, password);
+    List<Map<String, Object>> employeeList = dbService.getEmployeeData(queryAttributes.toArray(new String[0]), username, password);
 %>
+
 
 <!-- 직원 정보를 표시할 테이블 -->
 <form action="delete.jsp" method="post">
@@ -58,14 +55,9 @@
         <tr>
             <th>Select</th>
             <%
-                // 선택한 필드에 맞게 테이블 헤더 생성
                 if (attributes != null) {
                     for (String attr : attributes) {
-                        if ("Dno".equals(attr)) {
-                            out.print("<th>Dname</th>");
-                        } else {
-                            out.print("<th>" + attr + "</th>");
-                        }
+                        out.print("<th>" + attr + "</th>");
                     }
                 }
             %>
@@ -83,11 +75,7 @@
         <!-- 검색 조건에 맞는 필드만 표시 -->
         <% if (attributes != null) {
             for (String attr : attributes) {
-                if ("Dno".equals(attr)) {
-                    out.print("<td>" + employee.get("Dname") + "</td>");
-                } else {
-                    out.print("<td>" + employee.get(attr) + "</td>");
-                }
+                out.print("<td>" + employee.get(attr) + "</td>");
             }
         } %>
 

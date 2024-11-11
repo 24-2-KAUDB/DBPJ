@@ -71,5 +71,8 @@
 <form action="insert.jsp" method="get">
     <button type="submit">직원 추가</button>
 </form>
+<form action="bulkSalaryUpdate.jsp" method="get">
+    <button type="submit">월급 일괄 수정</button>
+</form>
 </body>
 </html>

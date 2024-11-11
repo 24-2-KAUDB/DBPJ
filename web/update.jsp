@@ -6,7 +6,7 @@
     <title>Update Salary</title>
 </head>
 <body>
-<h2>Update Employee Salary</h2>
+<h2>Update Employee</h2>
 <form action="update.jsp" method="post">
     <label>직원 번호:</label>
     <input type="text" name="ssn" required /><br/>
