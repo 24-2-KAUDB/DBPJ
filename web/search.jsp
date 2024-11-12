@@ -37,72 +37,65 @@
     <input type="checkbox" name="fields" value="Dno"> Dno
     <input type="checkbox" name="fields" value="Dname"> Dname
 
-    <h3>그룹별 평균 급여</h3>
-    <select name="groupBy" id="groupBy">
-        <option value="none" selected>그룹없음</option>
-        <option value="sex">성별</option>
-        <option value="department">부서</option>
-        <option value="supervisor">상급자</option>
-    </select>
-
-    <input type="submit" name="searchType" value="일반 검색">
-    <input type="submit" name="searchType" value="그룹별 평균 급여">
+    <input type="submit" value="검색하기">
 </form>
 
 <hr>
 
 <%
-    String searchType = request.getParameter("searchType");
-    String searchRange = request.getParameter("searchRange");
-    String rangeValue = request.getParameter("rangeValue");
-    String[] fields = request.getParameterValues("fields");
-    String groupBy = request.getParameter("groupBy");
-
-    DatabaseService dbService = new DatabaseService();
-    List<Map<String, Object>> results = new ArrayList<>();
-    // 세션에서 사용자 이름과 비밀번호를 가져오기
-    String username = (String) session.getAttribute("username");
-    String password = (String) session.getAttribute("password");
-
     try {
-        if ("일반 검색".equals(searchType)) {
-            // 일반 검색 로직
-            String condition = "";
-            if (searchRange != null && rangeValue != null && !rangeValue.isEmpty()) {
-                switch (searchRange) {
-                    case "department":
-                        condition = "Dname = '" + rangeValue + "'";
-                        break;
-                    case "sex":
-                        condition = "Sex = '" + rangeValue + "'";
-                        break;
-                    case "salary":
-                        condition = "Salary >= " + rangeValue;
-                        break;
-                    case "bdate":
-                        condition = "MONTH(Bdate) = " + rangeValue.replace("월", "");
-                        break;
-                    case "supervisor":
-                        condition = "Super_ssn = '" + rangeValue + "'";
-                        break;
-                    case "family":
-                        condition = "Ssn = '" + rangeValue + "'";
-                        break;
-                }
-            }
-            results = dbService.searchEmployees(fields, condition, username, password);
-        } else if ("그룹별 평균 급여".equals(searchType) && !"none".equals(groupBy)) {
-            // 그룹별 평균 급여 검색 로직
-            results = dbService.getAverageSalaryByGroup(groupBy, username, password);
+        String searchRange = request.getParameter("searchRange");
+        String rangeValue = request.getParameter("rangeValue");
+        String[] fields = request.getParameterValues("fields");
+
+        if (fields == null || fields.length == 0) {
+            out.println("하나 이상의 검색 항목을 선택하세요.");
+            return;
         }
 
-        // 검색 결과 표시
+        // 조건 설정
+        String condition = "";
+        if (searchRange != null && rangeValue != null && !rangeValue.isEmpty()) {
+            switch (searchRange) {
+                case "department":
+                    condition = "Dname = '" + rangeValue + "'";
+                    break;
+                case "sex":
+                    condition = "Sex = '" + rangeValue + "'";
+                    break;
+                case "salary":
+                    condition = "Salary >= " + rangeValue;
+                    break;
+                case "bdate":
+                    condition = "MONTH(Bdate) = " + rangeValue.replace("월", "");
+                    break;
+                case "supervisor":
+                    condition = "Super_ssn = '" + rangeValue + "'";
+                    break;
+                case "family":
+                    condition = "Ssn = '" + rangeValue + "'";
+                    break;
+                default:
+                    condition = "";
+                    break;
+            }
+        }
+
+        DatabaseService dbService = new DatabaseService();
+        String username = (String) session.getAttribute("username");
+        String password = (String) session.getAttribute("password");
+
+        // 검색 결과 가져오기
+        List<Map<String, Object>> results = dbService.getemployeeData(fields, condition, null, username, password);
+
+        // 검색 결과 출력
         out.println("<h3>검색 결과</h3>");
+        out.println("<p>Condition: " + condition + "</p>");
         out.println("<table border='1'><tr>");
+
         for (String field : fields) {
             out.println("<th>" + field + "</th>");
         }
-        if ("그룹별 평균 급여".equals(searchType)) out.println("<th>평균 급여</th>");
         out.println("</tr>");
 
         for (Map<String, Object> employee : results) {
@@ -110,18 +103,16 @@
             for (String field : fields) {
                 out.println("<td>" + employee.get(field) + "</td>");
             }
-            if ("그룹별 평균 급여".equals(searchType)) out.println("<td>" + employee.get("avg_salary") + "</td>");
             out.println("</tr>");
         }
         out.println("</table>");
 
     } catch (Exception e) {
-        e.printStackTrace(new java.io.PrintWriter(out));
+        e.printStackTrace();
     }
 %>
 
 <script>
-    // 검색 범위 변경 시 동적 옵션 업데이트
     function updateRangeValueOptions() {
         const searchRange = document.getElementById("searchRange").value;
         const rangeValueSelect = document.getElementById("rangeValueSelect");
@@ -159,12 +150,12 @@
             for (let month = 1; month <= 12; month++) {
                 const option = document.createElement("option");
                 option.value = month;
-                option.text = `${month}월`;
+                option.text = month + "월";
                 rangeValueSelect.appendChild(option);
             }
         } else if (searchRange === "supervisor") {
             rangeValueSelect.style.display = "inline";
-            const supervisors = ["James E Borg", "Jennifer S Wallace", "Ahmad V Jabbar"]; // 예시 상사 목록
+            const supervisors = ["James E Borg", "Jennifer S Wallace", "Ahmad V Jabbar"];
             supervisors.forEach(sup => {
                 const option = document.createElement("option");
                 option.value = sup;
@@ -173,7 +164,7 @@
             });
         } else if (searchRange === "family") {
             rangeValueSelect.style.display = "inline";
-            const employees = ["John Doe", "Jane Smith", "Michael Johnson"]; // 예시 가족 목록
+            const employees = ["John Doe", "Jane Smith", "Michael Johnson"];
             employees.forEach(emp => {
                 const option = document.createElement("option");
                 option.value = emp;
@@ -183,6 +174,8 @@
         }
     }
 </script>
-
+<form action="index.jsp" method="get">
+    <button type="submit">홈 화면</button>
+</form>
 </body>
 </html>

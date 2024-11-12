@@ -74,5 +74,11 @@
 <form action="bulkSalaryUpdate.jsp" method="get">
     <button type="submit">월급 일괄 수정</button>
 </form>
+<form action="searchGroup.jsp" method="get">
+    <button type="submit">평균 급여</button>
+</form>
+<form action="searchWorkHours.jsp" method="get">
+    <button type="submit">프로젝트별 근무시간</button>
+</form>
 </body>
 </html>

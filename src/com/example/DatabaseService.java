@@ -123,106 +123,70 @@ public class DatabaseService {
     }
 
 
-    // 일반 검색 메서드 (검색 범위와 검색 항목을 사용)
-    public List<Map<String, Object>> searchEmployees(String[] attributes, String condition, String username, String password) throws SQLException {
+    // 직원 데이터를 가져오는 메서드
+    public List<Map<String, Object>> getemployeeData(String[] fields, String condition, String groupBy, String user, String password) {
         List<Map<String, Object>> employeeList = new ArrayList<>();
-        if (attributes == null || attributes.length == 0) {
+
+        if (fields == null || fields.length == 0) {
             return employeeList;
         }
 
         // SELECT 절 구성
         StringBuilder query = new StringBuilder("SELECT ");
-        for (String attr : attributes) {
-            if ("Dname".equals(attr)) {
+        for (String field : fields) {
+            if ("Dname".equals(field)) {
                 query.append("DEPARTMENT.Dname AS Dname, ");
-            } else if ("Supervisor".equals(attr)) {
-                query.append("CONCAT(b.Fname, ' ', IFNULL(b.Minit, ''), ' ', b.Lname) AS Supervisor, ");
             } else {
-                query.append("EMPLOYEE.").append(attr).append(", ");
+                query.append("EMPLOYEE.").append(field).append(", ");
             }
         }
-        query.setLength(query.length() - 2); // 마지막 쉼표 제거
-        query.append(" FROM EMPLOYEE LEFT JOIN DEPARTMENT ON EMPLOYEE.Dno = DEPARTMENT.Dnumber");
 
-        // 상급자 조인 추가 (필요한 경우)
-        query.append(" LEFT JOIN EMPLOYEE b ON EMPLOYEE.Super_ssn = b.Ssn");
+        // groupBy 필드와 평균 급여 추가
+        if (groupBy != null && !groupBy.equals("none")) {
+            if (!Arrays.asList(fields).contains(groupBy)) {  // groupBy가 fields에 포함되지 않은 경우 추가
+                query.append(groupBy).append(", ");
+            }
+            query.append("AVG(EMPLOYEE.Salary) AS avg_salary ");
+        } else {
+            query.setLength(query.length() - 2); // 마지막 쉼표 제거
+        }
+
+        query.append(" FROM EMPLOYEE LEFT JOIN DEPARTMENT ON EMPLOYEE.Dno = DEPARTMENT.Dnumber");
 
         // WHERE 절 구성
         if (condition != null && !condition.isEmpty()) {
             query.append(" WHERE ").append(condition);
         }
 
-        System.out.println("Generated Query (Search): " + query); // 디버깅용 쿼리 출력
+        // GROUP BY 절 구성
+        if (groupBy != null && !groupBy.equals("none")) {
+            query.append(" GROUP BY ").append(groupBy);
+        }
 
-        try (Connection conn = connect(username, password);
+        try (Connection conn = connect(user, password);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query.toString())) {
 
             while (rs.next()) {
                 Map<String, Object> employee = new HashMap<>();
-                for (String attr : attributes) {
-                    if ("Dname".equals(attr)) {
-                        employee.put("Dname", rs.getObject("Dname"));
-                    } else if ("Supervisor".equals(attr)) {
-                        employee.put("Supervisor", rs.getObject("Supervisor"));
+                for (String field : fields) {
+                    if ("Dname".equals(field)) {
+                        employee.put("Dname", rs.getString("Dname"));
                     } else {
-                        employee.put(attr, rs.getObject(attr));
+                        employee.put(field, rs.getObject(field));
                     }
+                }
+                // 그룹별 평균 급여 추가 (정수 형태로 변환)
+                if (groupBy != null && !groupBy.equals("none")) {
+                    employee.put(groupBy, rs.getObject(groupBy));  // groupBy 필드 값을 추가
+                    employee.put("avg_salary", rs.getInt("avg_salary"));
                 }
                 employeeList.add(employee);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
         return employeeList;
-    }
-
-    // 그룹별 평균 급여 메서드 (그룹 기준에 따라 평균 급여를 계산)
-    public List<Map<String, Object>> getAverageSalaryByGroup(String groupBy, String username, String password) throws SQLException {
-        List<Map<String, Object>> result = new ArrayList<>();
-        StringBuilder query = new StringBuilder("SELECT ");
-
-        if ("sex".equals(groupBy)) {
-            query.append("EMPLOYEE.Sex AS Sex, ");
-        } else if ("department".equals(groupBy)) {
-            query.append("DEPARTMENT.Dname AS Dname, ");
-        } else if ("supervisor".equals(groupBy)) {
-            query.append("CONCAT(b.Fname, ' ', IFNULL(b.Minit, ''), ' ', b.Lname) AS Supervisor, ");
-        }
-        query.append("AVG(EMPLOYEE.Salary) AS avg_salary ");
-        query.append("FROM EMPLOYEE LEFT JOIN DEPARTMENT ON EMPLOYEE.Dno = DEPARTMENT.Dnumber ");
-
-        // 상급자 조인 추가 (필요한 경우)
-        if ("supervisor".equals(groupBy)) {
-            query.append("LEFT JOIN EMPLOYEE b ON EMPLOYEE.Super_ssn = b.Ssn ");
-        }
-
-        // GROUP BY 절 구성
-        if ("sex".equals(groupBy)) {
-            query.append("GROUP BY EMPLOYEE.Sex");
-        } else if ("department".equals(groupBy)) {
-            query.append("GROUP BY DEPARTMENT.Dname");
-        } else if ("supervisor".equals(groupBy)) {
-            query.append("GROUP BY Supervisor");
-        }
-
-        System.out.println("Generated Query (Group Average): " + query); // 디버깅용 쿼리 출력
-
-        try (Connection conn = connect(username, password);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query.toString())) {
-
-            while (rs.next()) {
-                Map<String, Object> row = new HashMap<>();
-                if ("sex".equals(groupBy)) {
-                    row.put("Sex", rs.getObject("Sex"));
-                } else if ("department".equals(groupBy)) {
-                    row.put("Dname", rs.getObject("Dname"));
-                } else if ("supervisor".equals(groupBy)) {
-                    row.put("Supervisor", rs.getObject("Supervisor"));
-                }
-                row.put("avg_salary", rs.getObject("avg_salary"));
-                result.add(row);
-            }
-        }
-        return result;
     }
 }
